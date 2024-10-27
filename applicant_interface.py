@@ -1,5 +1,3 @@
-# applicant_interface.py
-
 import streamlit as st
 import os
 import uuid
@@ -29,7 +27,7 @@ def applicant_interface():
             # Retrieve the job description skills for the selected job offer
             c.execute('''SELECT required_skills FROM job_offers WHERE job_id = ?''', (selected_job_id,))
             job_offer = c.fetchone()
-            job_description_skills = json.loads(job_offer[0])  # Assuming required_skills is stored as JSON
+            job_description_skills = json.loads(job_offer[0])
 
             # Resume upload
             uploaded_file = st.file_uploader("Upload your resume (PDF)", type="pdf")

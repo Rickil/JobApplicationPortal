@@ -26,8 +26,6 @@ def sentiment_analysis_model(text):
 
     response = tokenizer.decode(response[0][:-1].cpu().squeeze()) # remove the <|endoftext|> token and decode
     response = response[len(text):] # remove the input text
-
-    print(response)
     
     match = re.search(r'Sentiment: (\d)', response)
     sentiment_value = 0
