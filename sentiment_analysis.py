@@ -1,9 +1,10 @@
 from mingpt.model import GPT
 from mingpt.bpe import BPETokenizer
 import re
+import torch
 
 model_type = 'gpt2'
-device = 'cuda'
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
 model_path = 'models/gpt2_classification'
 model = GPT.from_pretrained(model_type, model_path=model_path)
 tokenizer = BPETokenizer()

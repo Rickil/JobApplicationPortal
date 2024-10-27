@@ -1,0 +1,4 @@
+streamlit
+pydparser
+transformers
+torch

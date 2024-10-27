@@ -25,6 +25,7 @@ pip install -e .
 
 ```bash
 pip install -r requirements.txt
+python -m spacy download en_core_web_sm
 ```
 
 ### 4. Initialize the Database
