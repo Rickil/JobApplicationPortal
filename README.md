@@ -1,6 +1,6 @@
 # Job Application Portal
 
-An interactive web application built with Streamlit that streamlines the job application and hiring process. This application allows HR personnel to post job offers and manage applicants, while job seekers can apply to specific job offers by uploading their resumes. A matching score will be associated betwwen resumes and job offers. The goal of this application is to provide a matching score between resumes and job offers enhanced using sentiment analysis.
+An interactive web application built with Streamlit that streamlines the job application and hiring process. This application allows HR personnel to post job offers and manage applicants, while job seekers can apply to specific job offers by uploading their resumes. A matching score will be associated between resumes and job offers. The goal of this application is to provide a matching score between resumes and job offers enhanced using sentiment analysis.
 
 ## Installation and Setup
 
