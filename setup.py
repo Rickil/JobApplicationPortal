@@ -1,11 +1,10 @@
 from setuptools import setup
 
-setup(name='minGPT',
+setup(name='hrflow_test',
       version='0.0.1',
-      author='Andrej Karpathy',
-      packages=['mingpt'],
-      description='A PyTorch re-implementation of GPT',
-      license='MIT',
+      author='Yanis Farhat',
+      packages=['mingpt', 'pydparser'],
+      description='A job application portal',
       install_requires=[
             'torch',
       ],

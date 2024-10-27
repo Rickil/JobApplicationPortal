@@ -1,3 +1,5 @@
+# hr_interface.py
+
 import streamlit as st
 import sqlite3
 import json
@@ -85,17 +87,29 @@ def hr_interface():
                     applicant_data = next(a for a in applicant_list if a['Applicant ID'] == selected_applicant_id)
 
                     st.write(f"**Applicant ID:** {applicant_data['Applicant ID']}")
-                    st.write(f"**Matching Score:** {applicant_data['Matching Score']}")
+                    st.write(f"**Matching Score:** {applicant_data['Matching Score']}%")
 
-                    st.write("**Extracted Skills:**")
+                    st.write("**Extracted Skills from Resume:**")
                     st.write(", ".join(applicant_data['Extracted Skills']))
 
-                    st.write("**Questions and Answers:**")
+                    # Improved Section Name and Presentation
+                    st.write("**Applicant's Additional Information on Missing Skills:**")
                     for skill, answer in applicant_data['Answers'].items():
                         validated = applicant_data['Validated Answers'][skill]
-                        st.write(f"- **Skill:** {skill}")
-                        st.write(f"  - **Answer:** {answer}")
-                        st.write(f"  - **Validated:** {'Yes' if validated == 1 else 'No'}")
+                        if validated == 1:
+                            validation_text = "Validated: Yes"
+                            validation_color = "green"
+                        else:
+                            validation_text = "Validated: No"
+                            validation_color = "red"
+
+                        st.markdown(f"""
+                        <div style='border: 1px solid #ccc; padding: 10px; margin-bottom: 10px;'>
+                            <p><strong>Skill:</strong> {skill}</p>
+                            <p><strong>Answer:</strong> {answer}</p>
+                            <p><strong style='color: {validation_color};'>{validation_text}</strong></p>
+                        </div>
+                        """, unsafe_allow_html=True)
 
                     # Optionally, provide a link to download the resume
                     resume_path = f"data/resumes/{applicant_data['Applicant ID']}.pdf"

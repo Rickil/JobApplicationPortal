@@ -50,52 +50,93 @@ def applicant_interface():
                 # Compare skills to find missing ones
                 missing_skills = list(set(job_description_skills) - set(extracted_skills))
 
-                # Generate questions for missing skills, store in session_state
-                if 'questions' not in st.session_state:
-                    import random
-                    num_questions = min(3, len(missing_skills))
-                    st.session_state['questions'] = random.sample(missing_skills, k=num_questions)
-                    st.session_state['answers'] = {}  # Initialize answers dict
+                # Store missing skills in session state
+                if 'missing_skills' not in st.session_state:
+                    st.session_state['missing_skills'] = missing_skills
 
-                st.write("Please answer the following questions:")
+                if missing_skills:
+                    st.write("Based on your resume, the following skills are missing:")
 
-                # Display questions and collect answers
-                for idx, skill in enumerate(st.session_state['questions']):
-                    answer = st.text_area(
-                        f"Do you have experience with {skill}? Please elaborate.",
-                        key=f"answer_{idx}"
+                    # Allow the applicant to select skills to provide answers for
+                    selected_skills = st.multiselect(
+                        "Select the skills you'd like to provide more information on:",
+                        options=st.session_state['missing_skills'],
+                        default=st.session_state.get('selected_skills', []),
+                        key='selected_skills'
                     )
-                    st.session_state['answers'][skill] = answer
 
-                if st.button("Submit Application"):
-                    # Validate answers using sentiment analysis
-                    validated_answers = {}
-                    for skill, answer in st.session_state['answers'].items():
-                        validation = sentiment_analysis_model(answer)
-                        validated_answers[skill] = validation
+                    # Collect answers for the selected skills
+                    st.write("Please provide details for the selected skills:")
+                    for skill in selected_skills:
+                        answer_key = f"answer_{skill}"
+                        st.text_area(
+                            f"Describe your experience with {skill}:",
+                            key=answer_key
+                        )
 
-                    # Calculate the matching score
-                    matching_score = calculate_matching_score(extracted_skills, validated_answers, job_description_skills)
+                    if st.button("Submit Application"):
+                        # Gather answers from session state
+                        answers = {}
+                        for skill in st.session_state['missing_skills']:
+                            answer_key = f"answer_{skill}"
+                            # For skills not selected, the answer will be an empty string
+                            answers[skill] = st.session_state.get(answer_key, "")
+                        
+                        # remove empty answers
+                        answers = {k: v for k, v in answers.items() if v}
 
-                    # Save applicant data to the database
-                    applicant_data = {
-                        'applicant_id': applicant_id,
-                        'job_id': selected_job_id,
-                        'extracted_skills': extracted_skills,
-                        'answers': st.session_state['answers'],
-                        'validated_answers': validated_answers,
-                        'matching_score': matching_score
-                    }
+                        # Validate answers using sentiment analysis
+                        validated_answers = {}
+                        for skill, answer in answers.items():
+                            validation = sentiment_analysis_model(answer)
+                            validated_answers[skill] = validation
 
-                    c.execute('''INSERT INTO applicants (applicant_id, job_id, data) VALUES (?, ?, ?)''',
-                              (applicant_id, selected_job_id, json.dumps(applicant_data)))
-                    conn.commit()
+                        # Calculate the matching score
+                        matching_score = calculate_matching_score(extracted_skills, validated_answers, job_description_skills)
 
-                    # Clear session state
-                    del st.session_state['questions']
-                    del st.session_state['answers']
+                        # Save applicant data to the database
+                        applicant_data = {
+                            'applicant_id': applicant_id,
+                            'job_id': selected_job_id,
+                            'extracted_skills': extracted_skills,
+                            'answers': answers,
+                            'validated_answers': validated_answers,
+                            'matching_score': matching_score
+                        }
 
-                    st.success("Your application has been submitted!")
+                        c.execute('''INSERT INTO applicants (applicant_id, job_id, data) VALUES (?, ?, ?)''',
+                                  (applicant_id, selected_job_id, json.dumps(applicant_data)))
+                        conn.commit()
+
+                        # Clear session state
+                        for key in list(st.session_state.keys()):
+                            if key.startswith('answer_') or key in ['missing_skills', 'selected_skills']:
+                                del st.session_state[key]
+
+                        st.success("Your application has been submitted!")
+                else:
+                    st.write("Great! Your resume matches all the required skills.")
+                    if st.button("Submit Application"):
+                        # Calculate the matching score
+                        matching_score = calculate_matching_score(extracted_skills, {}, job_description_skills)
+
+                        # Save applicant data to the database
+                        applicant_data = {
+                            'applicant_id': applicant_id,
+                            'job_id': selected_job_id,
+                            'extracted_skills': extracted_skills,
+                            'answers': {},
+                            'validated_answers': {},
+                            'matching_score': matching_score
+                        }
+
+                        c.execute('''INSERT INTO applicants (applicant_id, job_id, data) VALUES (?, ?, ?)''',
+                                  (applicant_id, selected_job_id, json.dumps(applicant_data)))
+                        conn.commit()
+
+                        st.success("Your application has been submitted!")
+            else:
+                st.info("Please upload your resume to proceed.")
         else:
             st.warning("No job offer selected.")
     else:
