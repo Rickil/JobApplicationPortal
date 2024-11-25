@@ -13,8 +13,8 @@ Follow these steps to set up and run the project locally.
 First, clone this repository to your local machine:
 
 ```bash
-git clone https://github.com/Rickil/hrflow
-cd hrflow
+git clone https://github.com/Rickil/JobApplicationPortal
+cd JobApplicationPortal
 ```
 
 ### 2. Install the minGPT Package
