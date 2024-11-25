@@ -2,6 +2,8 @@
 
 An interactive web application built with Streamlit that streamlines the job application and hiring process. This application allows HR personnel to post job offers and manage applicants, while job seekers can apply to specific job offers by uploading their resumes. A matching score will be associated between resumes and job offers. The goal of this application is to provide a matching score between resumes and job offers enhanced using sentiment analysis.
 
+The sentiment analysis is done using the [GPT2 model](https://paperswithcode.com/paper/language-models-are-unsupervised-multitask) trained on the [Stanford Sentiment Treebank](https://paperswithcode.com/dataset/sst).
+
 ## Installation and Setup
 
 Follow these steps to set up and run the project locally.
